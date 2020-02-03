@@ -19,7 +19,7 @@ RabbitEventStorageJob:
       settings-key: RabbitMq-Username
     Password:
       settings-key: RabbitMq-Password
-    ExchangeRegex:
+    ExchangeRegexps:
       settings-key: RabbitEventStorageJob-ExchangeRegexps
       types:
         - JsonArray
