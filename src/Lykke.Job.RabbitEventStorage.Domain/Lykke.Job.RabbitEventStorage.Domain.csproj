@@ -6,7 +6,4 @@
   <ItemGroup>
     <PackageReference Include="Lykke.Common" Version="7.5.0" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\contract\Lykke.Job.RabbitEventStorage.Contract\Lykke.Job.RabbitEventStorage.Contract.csproj" />
-  </ItemGroup>
 </Project>

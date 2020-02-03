@@ -1,16 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lykke.Sdk;
-using Lykke.Job.RabbitEventStorage.Domain.Services;
+using Lykke.Common;
 
 namespace Lykke.Job.RabbitEventStorage.Services
 {
     public class StartupManager : IStartupManager
     {
-        private readonly List<IRabbitStorageSubscriber> _rabbitSubscribers;
+        private readonly List<IStartStop> _rabbitSubscribers;
 
-        public StartupManager(
-            List<IRabbitStorageSubscriber> rabbitSubscribers)
+        public StartupManager(List<IStartStop> rabbitSubscribers)
         {
             _rabbitSubscribers = rabbitSubscribers;
         }

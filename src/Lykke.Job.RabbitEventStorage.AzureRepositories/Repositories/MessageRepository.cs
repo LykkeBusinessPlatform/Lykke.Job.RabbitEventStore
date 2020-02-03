@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using AzureStorage;
 using Lykke.Job.RabbitEventStorage.AzureRepositories.Entities;
 using Lykke.Job.RabbitEventStorage.Domain.Repositories;
-using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace Lykke.Job.RabbitEventStorage.AzureRepositories.Repositories
 {
     public class MessageRepository : IMessageRepository
     {
+        private const string DateFormat = "MM.dd.yyyy";
+        private const string TimestampFormat = "yyyy’-‘MM’-‘dd’T’HH’:’mm’:’ss.fffffffK";
+
         private static readonly char[] SplittingChars = { '_' };
         private readonly INoSQLTableStorage<MessageEntity> _storage;
 
@@ -22,18 +23,15 @@ namespace Lykke.Job.RabbitEventStorage.AzureRepositories.Repositories
 
         private static string GetPartitionKey(string exchangeName, DateTime date)
         {
-            return $"{exchangeName}_{date.Date:MM.dd.yyyy}";
+            return $"{exchangeName}_{date.Date.ToString(DateFormat)}";
         }
 
         public async Task SaveAsync(string exchangeName, DateTime date, long timestamp,string messagePayload)
         {
-            var message = 
-                new MessageEntity(
-                    GetPartitionKey(exchangeName, date),
-                    $"{timestamp.ToString()}_{Guid.NewGuid().ToString()}")
-                {
-                    MessagePayload = messagePayload
-                };
+            var message = new MessageEntity(GetPartitionKey(exchangeName, date), timestamp.ToString(TimestampFormat))
+            {
+                MessagePayload = messagePayload
+            };
 
             await _storage.InsertAsync(message);
         }
@@ -42,12 +40,12 @@ namespace Lykke.Job.RabbitEventStorage.AzureRepositories.Repositories
             GetAsync(string exchangeName, DateTime date, int take = 100, string continuationToken = null)
         {
             var result = await _storage.GetDataWithContinuationTokenAsync(
-                GetPartitionKey(exchangeName, date), 
-                take, 
+                GetPartitionKey(exchangeName, date),
+                take,
                 continuationToken);
 
-            return (result.ContinuationToken, result.Entities.Select(x => 
-                (x.PartitionKey.Split(SplittingChars,StringSplitOptions.RemoveEmptyEntries).FirstOrDefault(), 
+            return (result.ContinuationToken, result.Entities.Select(x =>
+                (x.PartitionKey.Split(SplittingChars, StringSplitOptions.RemoveEmptyEntries).FirstOrDefault(),
                     x.MessagePayload)));
         }
     }

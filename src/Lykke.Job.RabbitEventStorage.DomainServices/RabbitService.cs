@@ -12,18 +12,17 @@ namespace Lykke.Job.RabbitEventStorage.DomainServices
 {
     public class RabbitService : IRabbitService
     {
+        private const string _queueNameIdentifier = "rabbiteventstoragejob";
+
         private readonly RabbitMqManagmentApiClient _rabbitMqManagementApiClient;
-        private readonly string _queueNameIdentifier;
         private readonly IMessageRepository _messageRepository;
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1);
         private ILookup<string, BindingEntity> _bindingsLookup;
 
         public RabbitService(
             RabbitMqManagmentApiClient rabbitMqManagementApiClient,
-            IMessageRepository messageRepository,
-                string queueNameIdentifier)
+            IMessageRepository messageRepository)
         {
-            _queueNameIdentifier = queueNameIdentifier;
             _rabbitMqManagementApiClient = rabbitMqManagementApiClient;
             _messageRepository = messageRepository;
         }
@@ -34,16 +33,16 @@ namespace Lykke.Job.RabbitEventStorage.DomainServices
 
             return allExchanges.Select(x => new ExchangeEntity() { Name = x.Name, Type = x.Type, });
         }
-        
+
         public async Task<ILookup<string, BindingEntity>> GetAllBindingsAsync()
         {
             if (_bindingsLookup != null)
                 return _bindingsLookup;
-            
+
             try
-            {    
+            {
                 await _lock.WaitAsync();
-                
+
                 if (_bindingsLookup == null)
                 {
                     var allExchanges = await _rabbitMqManagementApiClient.GetBindingsAsync();
@@ -66,12 +65,11 @@ namespace Lykke.Job.RabbitEventStorage.DomainServices
             return _bindingsLookup;
         }
 
-
         public async Task SaveMessageAsync(RabbitMessage message)
         {
-            var date = DateTime.UtcNow.Date;
-            var timestamp = (long)DateTime.UtcNow.ToUnixTime();
-            await _messageRepository.SaveAsync(message.ExchangeName, date, timestamp, message.Payload);
+            var now = DateTime.UtcNow;
+            var timestamp = (long)now.ToUnixTime();
+            await _messageRepository.SaveAsync(message.ExchangeName, now.Date, timestamp, message.Payload);
         }
 
         public async Task<(IEnumerable<RabbitMessage> Messages, string ContinuationToken)>
@@ -92,7 +90,7 @@ namespace Lykke.Job.RabbitEventStorage.DomainServices
             var queuesForService = allQueues.Where(x => x.Name.Contains(_queueNameIdentifier));
 
             var tasks = new List<Task>(10);
-            
+
             foreach (var queue in queuesForService)
             {
                 tasks.Add(_rabbitMqManagementApiClient.RemoveQueueAsync(queue.Vhost, queue.Name));

@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Lykke.Job.RabbitEventStorage.Domain.Services;
+using Lykke.Common;
 using Lykke.Sdk;
 
 namespace Lykke.Job.RabbitEventStorage.Services
 {
     public class ShutdownManager : IShutdownManager
     {
-        private readonly List<IRabbitStorageSubscriber> _rabbitSubscribers;
+        private readonly List<IStartStop> _rabbitSubscribers;
 
         public ShutdownManager(
-            List<IRabbitStorageSubscriber> rabbitSubscribers)
+            List<IStartStop> rabbitSubscribers)
         {
             _rabbitSubscribers = rabbitSubscribers;
         }

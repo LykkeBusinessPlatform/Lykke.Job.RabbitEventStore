@@ -15,12 +15,19 @@ RabbitEventStorageJob:
         - RabbitMq
     ManagementUrl:
       settings-key: RabbitMq-ManagementUrl
-    ExchangeRegex:
-      settings-key: RabbitMq-ExchangeRegex
     Username:
       settings-key: RabbitMq-Username
     Password:
       settings-key: RabbitMq-Password
+    ExchangeRegex:
+      settings-key: RabbitEventStorageJob-ExchangeRegexps
+      types:
+        - JsonArray
+    ExludeExchangeRegexps:
+      settings-key: RabbitEventStorageJob-ExludeExchangeRegexps
+      types:
+        - JsonArray
+        - Optional
 SlackNotifications:
     AzureQueue:
         ConnectionString:

@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using Lykke.Common;
 using Lykke.Common.Log;
 using Lykke.Job.RabbitEventStorage.Domain;
 using Lykke.Job.RabbitEventStorage.Domain.Services;
@@ -7,7 +8,7 @@ using Lykke.RabbitMqBroker.Subscriber;
 
 namespace Lykke.Job.RabbitEventStorage.DomainServices
 {
-    public class RabbitStorageSubscriber : IRabbitStorageSubscriber
+    public class RabbitStorageSubscriber : IStartStop
     {
         private readonly IRabbitService _rabbitService;
         private RabbitMqSubscriber<string> _subscriber;
