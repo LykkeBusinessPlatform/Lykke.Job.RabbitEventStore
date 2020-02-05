@@ -36,10 +36,11 @@ namespace Lykke.Job.RabbitEventStorage.Modules
 
             builder.RegisterType<RabbitService>()
                 .As<IRabbitService>()
+                .WithParameter("rabbitMqConnectionString", _settings.Rabbit.ConnectionString)
                 .SingleInstance();
 
             builder.RegisterInstance(
-                new RabbitMqManagmentApiClient(
+                new RabbitMqManagementApiClient(
                     _settings.Rabbit.ManagementUrl,
                     _settings.Rabbit.Username,
                     _settings.Rabbit.Password));

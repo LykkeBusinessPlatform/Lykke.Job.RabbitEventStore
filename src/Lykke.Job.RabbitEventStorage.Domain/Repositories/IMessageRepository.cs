@@ -7,9 +7,9 @@ namespace Lykke.Job.RabbitEventStorage.Domain.Repositories
 {
     public interface IMessageRepository
     {
-        Task SaveAsync(string exchangeName, DateTime date, long timestamp, string messagePayload);
+        Task SaveAsync(string exchangeName, DateTime date, string messagePayload);
 
-        Task<(string ContinuationToken, IEnumerable<(string ExchangeName, string MessagePayload)> Messages)>
-            GetAsync(string exchangeName, DateTime date, int take = 100, string continuationToken = null);
+        Task<(string continuationToken, IEnumerable<string> messages)>
+            GetAsync(string exchangeName, DateTime date, DateTime dateFrom, DateTime dateTo, int take = 100, string continuationToken = null);
     }
 }

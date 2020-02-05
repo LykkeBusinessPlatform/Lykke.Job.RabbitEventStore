@@ -9,13 +9,8 @@ namespace Lykke.Job.RabbitEventStorage.Domain.Services
     {
         Task<IEnumerable<ExchangeEntity>> GetAllExchangesAsync();
 
-        Task<ILookup<string, BindingEntity>> GetAllBindingsAsync();
-
         Task SaveMessageAsync(RabbitMessage message);
 
-        Task<(IEnumerable<RabbitMessage> Messages, string ContinuationToken)>
-            RestoreMessageAsync(string exchangeName, DateTime date, int take, string continuationToken = null);
-
-        Task RemoveSubscriptionsAsync();
+        Task<string> RestoreAsync(string exchangeName, string queue, DateTime dateFrom, DateTime dateTo);
     }
 }

@@ -8,11 +8,11 @@ using Newtonsoft.Json;
 
 namespace Lykke.Job.RabbitEventStorage.DomainServices
 {
-    public class RabbitMqManagmentApiClient
+    public class RabbitMqManagementApiClient
     {
         private readonly HttpClient _http;
 
-        public RabbitMqManagmentApiClient(string rabbitMqUrl, string username, string password)
+        public RabbitMqManagementApiClient(string rabbitMqUrl, string username, string password)
         {
             var basicAuthHeader = Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
             _http = new HttpClient {Timeout = TimeSpan.FromMinutes(2)};
